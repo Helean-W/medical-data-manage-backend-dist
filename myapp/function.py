@@ -44,15 +44,18 @@ def importZip(Position):
         if Position == "胰腺":
             dcm = pydicom.dcmread(path, force=True)  # 读取dicom文件
             # info["PatientName"] = str(dcm.PatientName).split(" ")[0]  #清洗姓名
-            info["PatientAge"] = dcm.PatientAge
-            info["PatientAge"] = re.sub("\D", "", info["PatientAge"])  # 把字符串中的数字提取出来
-            info["PatientAge"] = int(info["PatientAge"])  # 把字符串的064转化成数字64
+            if dcm.get("PatientAge") != None:
+                info["PatientAge"] = dcm.PatientAge
+                info["PatientAge"] = re.sub(
+                    "\D", "", info["PatientAge"]
+                )  # 把字符串中的数字提取出来
+                info["PatientAge"] = int(info["PatientAge"])  # 把字符串的064转化成数字64
             if dcm.PatientSex == "F":
                 info["PatientSex"] = "女"
             elif dcm.PatientSex == "M":
                 info["PatientSex"] = "男"
             else:
-                info["PatientSex"] = "不详"
+                info["PatientSex"] = ""
             # info['PatientSex'] = dcm.PatientSex
         info["Position"] = Position
         info["Url"] = url + "resources/" + name
@@ -83,7 +86,9 @@ def importSingle(info, path, fname):
                 info["gender"] = "女"
             elif dcm.PatientSex == "M":
                 info["gender"] = "男"
-        if info["age"] == "" and dcm.PatientAge != "":
+            else:
+                info["gender"] = ""
+        if info["age"] == "" and dcm.get("PatientAge") != None:
             info["age"] = dcm.PatientAge
             info["age"] = re.sub("\D", "", info["age"])
             info["age"] = int(info["age"])

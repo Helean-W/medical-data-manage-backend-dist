@@ -1,8 +1,11 @@
 import cv2
 import numpy as np
 import sys
-
+import pydicom
+import SimpleITK
 import torchvision
+import cv2
+import uuid
 
 sys.path.append("../models/grading")
 import transformer as transformer
@@ -59,7 +62,21 @@ def grading_model(image_path):
     return prediction
 
 
+def importSingle(info, path, fname):
+    url = "http://122.144.180.37:8001/"
+    name = (
+        str(uuid.uuid4()).replace("-", "") + "." + fname.split(".")[1]
+    )  # 对每个dcm文件产生唯一id
+    print(name)
+    if info["position"] == "胰腺":
+        dcm = pydicom.dcmread(path, force=True)  # 读取dicom文件
+        print(dcm.PatientSex == "")
+        print(dcm.get("PatientAge"))
+
+
 if __name__ == "__main__":
-    grading_model(
-        "/home/ubuntu/medical-data-manage-backend/resources/grading_diag/16_left.jpeg"
-    )
+    info = {}
+    info["position"] = "胰腺"
+    path = "/home/ubuntu/medical-data-manage-backend/resources/4562012c2b7e42ec8d35ee414052b155.dcm"
+    name = "4562012c2b7e42ec8d35ee414052b155.dcm"
+    importSingle(info, path, name)
