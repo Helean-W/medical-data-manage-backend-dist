@@ -30,4 +30,7 @@ urlpatterns = [
     path("segexist/", views.segExist),
     path("gradimg/", views.gradImg),
     path("gradexist/", views.gradExist),
+    path("manualannotation/", views.manualAnnotation),
+    path("autoannotation/", views.autoAnnotation),
+    path("queryallannotation/", views.queryAllAnnotation),
 ]

@@ -241,3 +241,40 @@ def gradExist(request):
     result = grading_model(img_path)
     resp = {"isSuccess": True, "data": result}
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+def queryAllAnnotation(request):
+    resp = {"isSuccess": True, "msg": "success"}
+    cursor = connection.cursor()
+    cursor.execute("""select * from myapp_eyeannotation""")
+    row = cursor.fetchall()
+    resp["ret"] = row
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+def manualAnnotation(request):
+    id = request.GET.get("id")
+    annotation = request.GET.get("annotation")
+    print(id, annotation)
+    if EyeAnnotation.objects.filter(id=id).count() != 0:
+        EyeAnnotation.objects.filter(id=id).update(manual_annotation=annotation)
+    else:
+        EyeAnnotation.objects.create(
+            id=request.GET.get("id"), manual_annotation=request.GET.get("annotation")
+        )
+    resp = {"isSuccess": True}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+def autoAnnotation(request):
+    id = request.GET.get("id")
+    annotation = request.GET.get("annotation")
+    print(id, annotation)
+    if EyeAnnotation.objects.filter(id=id).count() != 0:
+        EyeAnnotation.objects.filter(id=id).update(auto_annotation=annotation)
+    else:
+        EyeAnnotation.objects.create(
+            id=request.GET.get("id"), auto_annotation=request.GET.get("annotation")
+        )
+    resp = {"isSuccess": True}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
